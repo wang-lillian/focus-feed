@@ -8,18 +8,20 @@ from datetime import datetime, timezone, timedelta
 
 load_dotenv()
 
+
 def fetch_articles(user_interest: str) -> list:
     interest_categories = get_interest_categories(user_interest)
 
-    articles_to_chunk = []
+    articles_to_process = []
     for category in interest_categories:
         articles = fetch_top_headlines(category)
-        articles_to_chunk.extend(articles)
+        articles_to_process.extend(articles)
 
-    return articles_to_chunk
+    return articles_to_process
 
-def get_interest_categories(user_interest : str) -> list:
-    interest = [ user_interest ]
+
+def get_interest_categories(user_interest: str) -> list:
+    interest = [user_interest]
     categories = [
         "general",
         "world",
