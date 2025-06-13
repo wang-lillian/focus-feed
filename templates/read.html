@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusFeed</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+</head>
+
+<body>
+    <h1>Your Newsletter</h1>
+    <h3>Track news based on what matters to you</h3>
+
+    <h3>Top articles about {{ user_interest }}</h3>
+    {% for article in articles %}
+    <h3>{{ article.title }}</h3>
+    <p>{{ article.description }}</p>
+    <p>{{ article.url }}</p>
+    <hr>
+    {% endfor %}
+</body>
+
+</html>

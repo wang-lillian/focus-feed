@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusFeed</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+</head>
+
+<body>
+    <h1>Welcome to FocusFeed!</h1>
+    <h3>Track news based on what matters to you</h3>
+
+    <form method="POST" action="/read">
+        <label for="user_interest">What do you want to read about? Enter a descriptive phrase</label><br>
+        <input type="text" id="user_interest" name="user_interest"><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
