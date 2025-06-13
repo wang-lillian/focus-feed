@@ -1,4 +1,4 @@
-from fetch_articles import fetch_articles
+from services.fetch_articles import fetch_articles
 from newspaper import Article
 from sentence_transformers import SentenceTransformer
 from elasticsearch import Elasticsearch
@@ -20,7 +20,7 @@ except Exception as e:
 model = SentenceTransformer("msmarco-MiniLM-L6-cos-v5")
 
 
-def index_articles(user_interest: str) -> None:
+def index_documents(user_interest: str) -> None:
     articles_to_process = fetch_articles(user_interest)
     docs_to_index = []
     for article in articles_to_process:
