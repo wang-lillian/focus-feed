@@ -5,23 +5,20 @@ import json
 import urllib.request
 from urllib.parse import urlencode
 from datetime import datetime, timezone, timedelta
+import time
 
 load_dotenv()
 
 
 def fetch_articles(user_interest: str) -> list:
-    interest_categories = get_interest_categories(user_interest)
+    # for fetching articles from the top 3 categories related to user_interest
+    # interest_categories = get_interest_categories(user_interest)
+    # articles_to_process = []
+    # for category in interest_categories:
+    #     articles = fetch_top_headlines(category)
+    #     articles_to_process.extend(articles)
 
-    articles_to_process = []
-    for category in interest_categories:
-        articles = fetch_top_headlines(category)
-        articles_to_process.extend(articles)
-
-    return articles_to_process
-
-
-def get_interest_categories(user_interest: str) -> list:
-    interest = [user_interest]
+    # for fetching articles from all categories    
     categories = [
         "general",
         "world",
@@ -33,17 +30,40 @@ def get_interest_categories(user_interest: str) -> list:
         "science",
         "health",
     ]
+    
+    articles_to_process = []
+    for category in categories:
+        articles = fetch_top_headlines(category)
+        articles_to_process.extend(articles)
+        time.sleep(1) # GNews API: 1 request per second limit
 
-    model = SentenceTransformer("all-MiniLM-L6-v2")
-    categories_embeddings = model.encode(categories, normalize_embeddings=True)
-    interest_embedding = model.encode(interest, normalize_embeddings=True)
+    return articles_to_process
 
-    similarities = util.cos_sim(categories_embeddings, interest_embedding).tolist()
-    top_similarities_indices = sorted(
-        range(len(categories)), key=lambda i: similarities[i], reverse=True
-    )[:3]
-    interest_categories = [categories[i] for i in top_similarities_indices]
-    return interest_categories
+
+# def get_interest_categories(user_interest: str) -> list:
+#     interest = [user_interest]
+#     categories = [
+#         "general",
+#         "world",
+#         "nation",
+#         "business",
+#         "technology",
+#         "entertainment",
+#         "sports",
+#         "science",
+#         "health",
+#     ]
+
+#     model = SentenceTransformer("all-MiniLM-L6-v2")
+#     categories_embeddings = model.encode(categories, normalize_embeddings=True)
+#     interest_embedding = model.encode(interest, normalize_embeddings=True)
+
+#     similarities = util.cos_sim(categories_embeddings, interest_embedding).tolist()
+#     top_similarities_indices = sorted(
+#         range(len(categories)), key=lambda i: similarities[i], reverse=True
+#     )[:3]
+#     interest_categories = [categories[i] for i in top_similarities_indices]
+#     return interest_categories
 
 
 def fetch_top_headlines(category: str) -> list:
