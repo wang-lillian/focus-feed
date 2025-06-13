@@ -18,7 +18,7 @@ def fetch_articles(user_interest: str) -> list:
     #     articles = fetch_top_headlines(category)
     #     articles_to_process.extend(articles)
 
-    # for fetching articles from all categories    
+    # for fetching articles from all categories
     categories = [
         "general",
         "world",
@@ -30,12 +30,12 @@ def fetch_articles(user_interest: str) -> list:
         "science",
         "health",
     ]
-    
+
     articles_to_process = []
     for category in categories:
         articles = fetch_top_headlines(category)
         articles_to_process.extend(articles)
-        time.sleep(1) # GNews API: 1 request per second limit
+        time.sleep(1)  # GNews API: 1 request per second limit
 
     return articles_to_process
 

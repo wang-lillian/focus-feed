@@ -14,6 +14,7 @@ interest_lock = Lock()
 latest_user_interest = None
 scheduler = BackgroundScheduler()
 
+
 def scheduled_indexing():
     with interest_lock:
         if latest_user_interest:
@@ -23,12 +24,10 @@ def scheduled_indexing():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    scheduler.add_job(scheduled_indexing, "interval", hours=1)
+    scheduler.add_job(scheduled_indexing, "interval", hours=3)
     scheduler.start()
-    print("Scheduler started at startup")
     yield
     scheduler.shutdown()
-    print("Scheduler shut down")
 
 
 app = FastAPI(lifespan=lifespan)
@@ -42,7 +41,9 @@ def render_home(request: Request):
 
 
 @app.post("/read", response_class=HTMLResponse)
-def render_read(request: Request, user_interest: str = Form(...), action: str = Form(...)):
+def render_read(
+    request: Request, user_interest: str = Form(...), action: str = Form(...)
+):
     global latest_user_interest
     if action == "submit":
         with interest_lock:
@@ -57,7 +58,6 @@ def render_read(request: Request, user_interest: str = Form(...), action: str = 
         name="read.html",
         context={"articles": results, "user_interest": user_interest},
     )
-
 
 
 if __name__ == "__main__":
