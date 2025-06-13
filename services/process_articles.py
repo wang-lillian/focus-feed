@@ -8,8 +8,16 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-model = SentenceTransformer("msmarco-MiniLM-L6-cos-v5")
+elastic_cloud_id = os.getenv("ELASTIC_CLOUD_ID")
+elastic_api_key = os.getenv("ELASTIC_API_KEY")
 elastic_index_name = "articles_index"
+
+try:
+    es = Elasticsearch(cloud_id=elastic_cloud_id, api_key=elastic_api_key)
+except Exception as e:
+    raise Exception("Failed to connect to Elasticsearch: " + str(e))
+
+model = SentenceTransformer("msmarco-MiniLM-L6-cos-v5")
 
 
 def index_articles(user_interest: str) -> None:
@@ -19,46 +27,39 @@ def index_articles(user_interest: str) -> None:
         docs = process_article(article)
         docs_to_index.extend(docs)
 
-    es = prepare_index()
+    if not es.indices.exists(index=elastic_index_name):
+        create_index()
+
     bulk(
         es,
         bulk_actions(docs_to_index),
         stats_only=True,
         raise_on_error=False,
         ignore_status=[409],
+        refresh=True,
     )
 
 
-def prepare_index():
-    elastic_cloud_id = os.getenv("ELASTIC_CLOUD_ID")
-    elastic_api_key = os.getenv("ELASTIC_API_KEY")
-
-    try:
-        es = Elasticsearch(cloud_id=elastic_cloud_id, api_key=elastic_api_key)
-    except Exception as e:
-        raise Exception("Failed to connect to Elasticsearch: " + str(e))
-
+def create_index():
     mappings = {
         "dynamic": "false",
         "properties": {
-            "title": {"type": "text", "index": "false"},
-            "description": {"type": "text", "index": "false"},
-            "url": {"type": "text", "index": "false"},
-            "title_desc": {"type": "text", "index": "true"},
+            "title": {"type": "text"},
+            "description": {"type": "text"},
+            "url": {"type": "keyword"},
             "content_vector": {
                 "type": "dense_vector",
                 "dims": 384,
-                "index": "true",
                 "similarity": "cosine",
                 "index_options": {"type": "int4_hnsw"},
             },
         },
     }
 
-    if not es.indices.exists(index=elastic_index_name):
+    try:
         es.indices.create(index=elastic_index_name, mappings=mappings)
-
-    return es
+    except Exception as e:
+        raise Exception(f"Failed to create {elastic_index_name}: {str(e)}")
 
 
 def bulk_actions(docs_to_index: list, index_name=elastic_index_name):
@@ -109,7 +110,6 @@ def create_documents(article: dict, chunks: list[str]) -> list[dict]:
             {
                 "title": article["title"],
                 "description": article["description"],
-                "title_desc": f"{article["title"]} {article["description"]}",
                 "url": article["url"],
                 "chunk_index": index,
                 "content_vector": model.encode(chunk).tolist(),
