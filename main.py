@@ -49,7 +49,7 @@ def render_read(request: Request, user_interest: str = Form(...), action: str = 
             latest_user_interest = user_interest.strip().lower()
         index_documents(user_interest)
     elif action == "refresh":
-        print("refreshed!")
+        pass
 
     results = search(user_interest)
     return templates.TemplateResponse(

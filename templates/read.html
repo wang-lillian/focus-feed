@@ -13,6 +13,11 @@
     <h3>Track news based on what matters to you</h3>
 
     <h3>Top articles about {{ user_interest }}</h3>
+    <form method="POST" action="/read">
+        <input type="hidden" id="user_interest" name="user_interest" value="{{ user_interest }}"><br>
+        <button type="submit" name="action" value="refresh">Refresh</button>
+    </form>
+
     {% for article in articles %}
     <h3>{{ article.title }}</h3>
     <p>{{ article.description }}</p>
