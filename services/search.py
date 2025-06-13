@@ -1,4 +1,4 @@
-from process_articles import es, model, elastic_index_name, index_articles
+from services.process_articles import es, model, elastic_index_name
 
 
 def search(user_interest: str) -> list[dict]:
