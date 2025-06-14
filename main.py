@@ -24,7 +24,7 @@ def scheduled_indexing():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    scheduler.add_job(scheduled_indexing, "interval", hours=3)
+    scheduler.add_job(scheduled_indexing, "interval", minutes=90)
     scheduler.start()
     yield
     scheduler.shutdown()
@@ -49,8 +49,6 @@ def render_read(
         with interest_lock:
             latest_user_interest = user_interest.strip().lower()
         index_documents(user_interest)
-    elif action == "refresh":
-        pass
 
     results = search(user_interest)
     return templates.TemplateResponse(
