@@ -33,7 +33,7 @@ def search(user_interest: str) -> list[dict]:
                     "rank_window_size": 20,
                 }
             },
-            "_source": ["title", "description", "url"],
+            "_source": ["title", "description", "url", "image"],
         },
     )
 
@@ -43,6 +43,7 @@ def search(user_interest: str) -> list[dict]:
             "title": hit["_source"]["title"],
             "description": hit["_source"]["description"],
             "url": hit["_source"]["url"],
+            "image": hit["_source"]["image"],
         }
         for hit in hits
     ]
