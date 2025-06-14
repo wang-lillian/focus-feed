@@ -22,6 +22,7 @@ model = SentenceTransformer("msmarco-MiniLM-L6-cos-v5")
 
 def index_documents(user_interest: str) -> None:
     articles_to_process = fetch_articles(user_interest)
+
     docs_to_index = []
     for article in articles_to_process:
         docs = process_article(article)
@@ -30,7 +31,7 @@ def index_documents(user_interest: str) -> None:
     if not es.indices.exists(index=elastic_index_name):
         create_index()
 
-    bulk(
+    success, failed = bulk(
         es,
         bulk_actions(docs_to_index),
         stats_only=True,
@@ -38,6 +39,7 @@ def index_documents(user_interest: str) -> None:
         ignore_status=[409],
         refresh=True,
     )
+    print(f"INDEXED {success} DOCUMENTS | {failed} FAILED")
 
 
 def create_index():
@@ -47,6 +49,7 @@ def create_index():
             "title": {"type": "text"},
             "description": {"type": "text"},
             "url": {"type": "keyword"},
+            "image": {"type": "text", "index": False},
             "content_vector": {
                 "type": "dense_vector",
                 "dims": 384,
@@ -59,7 +62,7 @@ def create_index():
     try:
         es.indices.create(index=elastic_index_name, mappings=mappings)
     except Exception as e:
-        raise Exception(f"Failed to create {elastic_index_name}: {str(e)}")
+        raise Exception("Failed to create " + elastic_index_name + ": " + str(e))
 
 
 def bulk_actions(docs_to_index: list, index_name=elastic_index_name):
@@ -79,6 +82,8 @@ def bulk_actions(docs_to_index: list, index_name=elastic_index_name):
 
 def process_article(article: dict) -> list[dict]:
     content = extract_content(article)
+    if content == "":
+        return []
     chunks = chunk_content(content)
     docs = create_documents(article, chunks)
     return docs
@@ -87,9 +92,13 @@ def process_article(article: dict) -> list[dict]:
 def extract_content(article: dict) -> str:
     url = article["url"]
     article_obj = Article(url=url)
-    article_obj.download()
-    article_obj.parse()
-    return article_obj.text
+    try:
+        article_obj.download()
+        article_obj.parse()
+        return article_obj.text
+    except Exception as e:
+        # print(f"Failed to extract content from {url}: {str(e)}")
+        return ""
 
 
 def chunk_content(content: str) -> list[str]:
@@ -111,6 +120,7 @@ def create_documents(article: dict, chunks: list[str]) -> list[dict]:
                 "title": article["title"],
                 "description": article["description"],
                 "url": article["url"],
+                "image": article["image"],
                 "chunk_index": index,
                 "content_vector": model.encode(chunk).tolist(),
             }
