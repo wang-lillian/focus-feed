@@ -20,16 +20,17 @@
     <div class="d-flex h-100 p-3 mx-auto flex-column">
         <main role="main" class="m-auto">
             <h1 class="display-3 playfair-display">FocusFeed</h1>
-            <h2 class="playfair-display">Discover news tailored to you.</h2>
+            <h2 class="playfair-display">Discover a newsletter, tailored to you.</h2>
             <br>
             <form method="POST" action="/read" class="form-group">
                 <p class="lead lato">
-                    <label for="user_interest">What do you want to read about?
+                    <label for="user_interest">What do you want to explore?
                         <br> Enter a descriptive
                         phrase or question:</label><br>
                 </p>
                 <input type="text" id="user_interest" name="user_interest"
-                    placeholder="E.g. how is the stock market doing" class="form-control" required><br>
+                    placeholder="E.g. how is the stock market doing" class="form-control w-75 mx-auto"
+                    required><br>
                 <button type="submit" name="action" value="submit" id="submit_btn" class="btn btn-primary"
                     style="background-color: #272757;">
                     Submit
