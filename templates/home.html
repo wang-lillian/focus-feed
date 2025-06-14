@@ -5,18 +5,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FocusFeed</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', path='/icon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
 </head>
 
-<body>
-    <h1>Welcome to FocusFeed!</h1>
-    <h3>Track news based on what matters to you</h3>
+<body class="text-center">
+    <div class="d-flex h-100 p-3 mx-auto flex-column">
+        <main role="main" class="m-auto">
+            <h1 class="display-3 playfair-display">FocusFeed</h1>
+            <h2 class="playfair-display">Discover news tailored to you.</h2>
+            <br>
+            <form method="POST" action="/read" class="form-group">
+                <p class="lead lato">
+                    <label for="user_interest">What do you want to read about?
+                        <br> Enter a descriptive
+                        phrase or question:</label><br>
+                </p>
+                <input type="text" id="user_interest" name="user_interest"
+                    placeholder="E.g. how is the stock market doing" class="form-control" required><br>
+                <button type="submit" name="action" value="submit" id="submit_btn" class="btn btn-primary"
+                    style="background-color: #272757;">
+                    Submit
+                </button>
+            </form>
+        </main>
 
-    <form method="POST" action="/read">
-        <label for="user_interest">What do you want to read about? Enter a descriptive phrase</label><br>
-        <input type="text" id="user_interest" name="user_interest"><br>
-        <button type="submit" name="action" value="submit">Submit</button>
-    </form>
+        <footer class="mt-auto">
+            <div>
+                <p class="lato">Check out the <a href="https://github.com/wang-lillian/focus-feed"
+                        style="color: #272757;">project
+                        repository</a> to learn
+                    more!</p>
+            </div>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+        const form = document.querySelector("form");
+        const submit_btn = document.getElementById("submit_btn");
+
+        form.addEventListener("submit", function () {
+            submit_btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Searching...`;
+        })
+    </script>
 </body>
 
 </html>
