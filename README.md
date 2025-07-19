@@ -21,9 +21,3 @@ A full-stack web app that delivers personalized news updates based on user-defin
 - Backend - FastAPI, Python
 - Hybrid semantic search - Elasticsearch, Sentence Transformers models
 - Other - APScheduler, GNews API, Newspaper3k
-
-
-## Ideas for future iterations
-- Allow users to create an account
-- Send personalized newsletters to each user's email periodically
-- Allow users to create a newsletter with multiple interests 
