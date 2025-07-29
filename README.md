@@ -20,4 +20,4 @@ A full-stack web app that delivers personalized news updates based on user-defin
 - Frontend - Jinja2, HTML, Bootstrap, JavaScript
 - Backend - FastAPI, Python
 - Hybrid semantic search - Elasticsearch, Sentence Transformers models
-- Other - APScheduler, GNews API, Newspaper3k
+- Web scraping/processing - APScheduler, GNews API, Newspaper3k
